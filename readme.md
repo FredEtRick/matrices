@@ -12,7 +12,7 @@ Pour installer le projet, pour créer une copie personnelle chez soit, suivez le
 ### sur github
 
 * rendez vous sur https://github.com/FredEtRick/matrices
-* cliquez sur le bouton vert à droite "clone or download"
+* cliquez sur le bouton vert à droite "code"
 * copiez le lien fourni
 
 ### en lignes de commande
