@@ -18,7 +18,21 @@ class Matrice() :
 
     # =========== CREATION DE LA MATRICE (constructeur et méthodes qu'il appel) ===========
 
-    # constructeur
+    """constructeur
+    Args : 
+        saisie (bool) : True si l'utilisateur doit saisir manuellement chaque valeur de la matrice
+        hasard (bool) : True si chaque valeur de la matrice doit être tirée au sort
+        identite (bool) : True si l'utilisateur souhaite créer une matrice identité
+        nbl (int) : NomBre de Lignes de la matrice
+        nbc (int) : NomBre de Colonnes de la matrice
+        matrice (list[list[float]]) : matrice. Pas l'objet, mais les valeurs, sous forme de liste de lignes, étant elles mêmes des listes de float
+        minNbl (int) : nombre minimal de lignes dans la matrice (pour un choix au hasard)
+        maxNbl (int) : nombre maximal de lignes dans la matrice
+        minNbc (int) : nombre minimal de colonnes dans la matrice
+        maxNbc (int) : nombre maximal de colonnes dans la matrice
+        minVals (int) : valeur minimale dans chaque case de la matrice
+        maxVals (int) : valeur minimale dans chaque case de la matrice
+    """
     def __init__(self, saisie = False, hasard = False, identite=False, nbl = 0, nbc = 0, matrice = [], minNbl = 2, maxNbl = 8, minNbc = 2, maxNbc = 8, minVals = -25, maxVals = 25) :
         if saisie :
             nbl, nbc, matrice = self.saisie()
@@ -30,7 +44,12 @@ class Matrice() :
         self.nbc = nbc
         self.matrice = matrice
     
-    # saisie manuelle de la matrice pour le constructeur, valeur par valeur
+    """ saisie manuelle de la matrice pour le constructeur, valeur par valeur
+    Return :
+        int : nombre de lignes de la matrice
+        int : nombre de colonnes de la matrice
+        list[list[float]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
+    """
     def saisie(self) :
         print()
         print("Saisie de la matrice :")
@@ -45,8 +64,19 @@ class Matrice() :
             matrice.append(ligne)
         return nbl, nbc, matrice
 
-    # remplissage de la matrice au hasard, pour le constructeur, avec limites éventuellement indiquées manuellement
-    # (cf menu.py, appliquerChoix, choix 1)
+    """ remplissage de la matrice au hasard, pour le constructeur, avec limites éventuellement indiquées manuellement (cf menu.py, appliquerChoix, choix 1)
+    Args :
+        minNbl (int) : nombre minimal de lignes dans la matrice (pour un choix au hasard)
+        maxNbl (int) : nombre maximal de lignes dans la matrice
+        minNbc (int) : nombre minimal de colonnes dans la matrice
+        maxNbc (int) : nombre maximal de colonnes dans la matrice
+        minVals (int) : valeur minimale dans chaque case de la matrice
+        maxVals (int) : valeur minimale dans chaque case de la matrice
+    Return :
+        int : nombre de lignes de la matrice
+        int : nombre de colonnes de la matrice
+        list[list[float]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
+    """
     def hasard(self, minNbl, maxNbl, minNbc, maxNbc, minVals, maxVals) :
         nbl = random.randint(minNbl, maxNbl)
         nbc = random.randint(minNbc, maxNbc)
@@ -61,7 +91,11 @@ class Matrice() :
 
     # =========== REPRESENTATION TEXTUELLE ===========
     
-    # créé une représentation de la matrice sous forme de string, et la renvoie
+    """ créé une représentation de la matrice sous forme de string, et la renvoie
+    Args :
+        espace (int) : espace prit par une valeur dans la matrice, en terme de nombres de caractères, pour éviter décalages d'une ligne sur l'autre
+        decalage (int) : décalage appliqué à la matrice, marge créée sur la gauche. Utile pour B dans AB=C, en affichant B au dessus de C, pour que le calcul soit plus naturel pour l'humain. Pas encore implémenté.
+    """
     def __repr__(self, espace = 6, decalage = 0) :
         strMat = ""
         for ligne in self.matrice :
@@ -73,9 +107,14 @@ class Matrice() :
             strMat += "]\n"
         return strMat
     
-    # créé une représentation normalisée d'un nombre
-    # en vue de l'affichage de la matice, pour éviter d'avoir des valeurs décallées en fonction des valeurs présentes
-    # permet d'indiquer une précision pour le float, et la largeur souhaitée d'une colonne
+    """ créé une représentation normalisée d'un nombre. En vue de l'affichage de la matice, pour éviter d'avoir des valeurs décallées en fonction des valeurs présentes. Permet d'indiquer une précision pour le float, et la largeur souhaitée d'une colonne.
+    Args :
+        n (float) : valeur à afficher dans une case de la matrice
+        largeur (int) : largeur d'une colonne de la matrice
+        precision (int) : précision de la valeur, pour l'affichage
+    Return :
+        str : texte à afficher pour représenter la valeur dans la case de la matrice
+    """
     def normaliserLargeur(self, n, largeur, precision) :
         chaine = str(round(n, precision))
         while len(chaine) < largeur :
@@ -84,17 +123,21 @@ class Matrice() :
 
     # =========== PROPRIETES MATRICE ===========
 
-    # renvoie le nombre de variables libres de la matrice
-    # note : matrice self considérée comme augmentée
+    """ renvoie le nombre de variables libres de la matrice. Note : matrice self considérée comme augmentée
+    Return :
+        int : nullity (nombre de dimensions du noyau de la matrice)
+    """
     def nullity(self) :
         mrref = self.rref()
         libres, pivots = self.indicesLibresPivots()
         nullity = len(libres)
         return nullity
     
-    # renvoie deux listes, correspondant respectivement aux indices :
-    # des variables libres
-    # des variables pivots
+    """ renvoie deux listes, correspondant respectivement aux indices : des variables libres ; des variables pivots
+    Return :
+        List[int] : indices des colonnes de la matrice correspondant aux variables libres
+        List[int] : indices des colonnes de la matrice correspondant aux variables pivots
+    """
     def indicesLibresPivots(self) :
         mrref = self.rref()
         libres = []
@@ -122,8 +165,14 @@ class Matrice() :
 
     # =========== MATRICES PARTICULIERES ===========
 
-    # renvoie une matrice identité, des dimensions demandées
-    # TODO : classmethod ?
+    """ renvoie une matrice identité, des dimensions demandées.
+    Args :
+        n (int) : nombre de lignes et de colonnes
+    Return :
+        int : nombre de lignes de la matrice
+        int : nombre de colonnes de la matrice
+        list[list[float]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
+    """
     def identite(self, n) :
         matrice = []
         for i in range(n) :
@@ -136,7 +185,10 @@ class Matrice() :
             matrice.append(ligne)
         return n, n, matrice
 
-    # renvoie une version transposée de la matrice
+    """ renvoie une version transposée de la matrice
+    Return :
+        Matrice : matrice transposée
+    """
     def transposeReturn(self) :
         transp = []
         for j in range(self.nbc) :
@@ -147,13 +199,16 @@ class Matrice() :
         transp = Matrice(nbl=self.nbc, nbc=self.nbl, matrice=transp)
         return transp
     
-    # transpose la matrice elle même directement, ne renvoie rien
-    # TODO : pas utilisé pour le moment. Utiliser ? Supprimer ?
+    """ transpose la matrice elle même directement, ne renvoie rien. TODO : pas utilisé pour le moment. Utiliser ? Supprimer ?
+    """
     def transposeInplace(self) :
         transp = self.transposeReturn()
         self.nbl, self.nbc, self.matrice = transp.nbl, transp.nbc, transp.matrice
 
-    # renvoie une version échelonnée réduite de la matrice
+    """ renvoie une version échelonnée réduite de la matrice
+    Return :
+        Matrice : version échelonnée réduite de la matrice
+    """
     def rref(self) :
         pivotCol = 0 # progression sur les colonnes (matrice passée en RREF dans cols d'avant)
         pivotLigne = 0 # dernière position pivot, avant => calculs déjà faits
@@ -185,7 +240,10 @@ class Matrice() :
             parcoursLigne = pivotLigne
         return copie
         
-    # calcule et renvoie l'inverse de la matrice
+    """ calcule et renvoie l'inverse de la matrice
+    Return :
+        Matrice : version inversée de la matrice
+    """
     def inverse(self) :
         if self.nbl != self.nbc :
             return "la matrice doit être carré pour posséder un inverse"
@@ -203,8 +261,10 @@ class Matrice() :
 
     # =========== SOLUTIONS ET LEURS NOMBRES ===========
     
-    # renvoie un booléen indiquant si la matrice a 0 solutions ou non
-    # note : matrice self considérée comme augmentée
+    """ renvoie un booléen indiquant si la matrice a 0 solutions ou non. Note : matrice self considérée comme augmentée
+    Return :
+        bool : True si la matrice n'a pas de solutions
+    """
     def sol0(self) :
         mrref = self.rref()
         for i in range(self.nbl) :
@@ -212,8 +272,10 @@ class Matrice() :
                 return True
         return False
     
-    # renvoie le nombre de solutions de la matrice
-    # note : matrice self considérée comme augmentée
+    """ renvoie le nombre de solutions de la matrice. Note : matrice self considérée comme augmentée
+    Return :
+        int : nombre de solutions de la matrice
+    """
     def nbSol(self) :
         if self.sol0() :
             return 0
@@ -222,8 +284,10 @@ class Matrice() :
         else :
             return 1
     
-    # renvoie la solution, si la matrice n'en a qu'une
-    # (à n'utiliser que dans ce cas)
+    """ renvoie la solution, si la matrice n'en a qu'une (à n'utiliser que dans ce cas)
+    Return :
+        str : solution(s) de la matrice
+    """
     def solSi1(self) :
         mrref = self.rref()
         sol = []
@@ -231,9 +295,10 @@ class Matrice() :
             sol.append(i[-1])
         return sol
     
-    # renvoie le noyau de la matrice
-    # (les vecteurs base du sous espace dont l'image par la matrice est l'origine)
-    # TODO : améliorer une fois que j'aurais créé la classe vecteur
+    """ renvoie le noyau de la matrice (les vecteurs base du sous espace dont l'image par la matrice est l'origine) TODO : améliorer une fois que j'aurais créé la classe vecteur
+    Return :
+        list[list[float]] : noyau, liste de vecteurs, chaque vecteur étant une liste de floats
+    """
     def noyau(self) :
         mrref = self.rref()
         libres, pivots = self.indicesLibresPivots()
@@ -254,9 +319,10 @@ class Matrice() :
             noyau.append(vecteur)
         return noyau
     
-    # calcule une solution particulière de la matrice
-    # utilisé pour le calcul de la solution générale, quand la matrice a une infinité de solutions
-    # considérer la matrice comme étant augmentée
+    """ calcule une solution particulière de la matrice. Utilisé pour le calcul de la solution générale, quand la matrice a une infinité de solutions. Considérer la matrice comme étant augmentée
+    Return :
+        list[float] : vecteur, une solution particulière de la matrice augmentée
+    """
     def xp(self) :
         mrref = self.rref()
         libres, pivots = self.indicesLibresPivots()
@@ -270,8 +336,10 @@ class Matrice() :
                 xp.append(0)
         return xp
     
-    # calcule les solutions et créé un string pour affichage
-    # a utiliser si la matrice a une infinité de solutions
+    """ calcule les solutions et créé un string pour affichage. A utiliser si la matrice a une infinité de solutions
+    Return :
+        str : solutions de la matrice
+    """
     def solInf(self) :
         strSol = ""
         xp = self.xp()
@@ -297,8 +365,10 @@ class Matrice() :
                     strSol += "\n"
         return strSol
     
-    # renvoie les solutions de la matrice
-    # détermine le nombre de solutions, puis appelle les méthodes nécessaires en fonction
+    """ renvoie les solutions de la matrice. Détermine le nombre de solutions, puis appelle les méthodes nécessaires en fonction
+    Return :
+        str : solution(s) de la matrice
+    """
     def sol(self) :
         nbSolutions = self.nbSol()
         if nbSolutions == 0 :
@@ -312,8 +382,12 @@ class Matrice() :
 
     # =========== OPERATIONS ENTRE MATRICES ===========
     
-    # renvoie la somme de la matrice avec une autre si elles ont même dimensions
-    # sinon : prévient que le calcul est impossible + renvoie une matrice vide
+    """ renvoie la somme de la matrice avec une autre si elles ont même dimensions. Sinon : prévient que le calcul est impossible + renvoie une matrice vide
+    Args :
+        m2 (Matrice) : matrice à ajouter à la matrice self
+    Return :
+        Matrice : matrice résultant de la somme de self avec m2
+    """
     def somme(self, m2) :
         resultat = []
         if self.nbl != m2.nbl or self.nbc != m2.nbc :
@@ -328,7 +402,12 @@ class Matrice() :
         resultat = Matrice(nbl=self.nbl, nbc=self.nbc, matrice=resultat)
         return resultat
 
-    # renvoie le produit de la matrice avec une autre
+    """ renvoie le produit de la matrice avec une autre
+    Args :
+        m2 (Matrice) : matrice à multiplier avec à la matrice self
+    Return :
+        Matrice : matrice résultant du produit de self avec m2
+    """
     def produit(self, m2) :
         resultat = []
         if self.nbc != m2.nbl :

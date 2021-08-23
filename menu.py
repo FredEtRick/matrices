@@ -44,7 +44,10 @@ listeMatrices = [] # matrices 'mémorisées' le temps de l'exécution
 
 # =========== FONCTIONS DIVERSES ===========
 
-# présente menu à l'utilisateur, et récolte son choix
+""" présente menu à l'utilisateur, et récolte son choix
+Return :
+    int : indice (dans 'menu') du choix fait par l'utilisateur
+"""
 def choixMenu() :
     iPremiereExclue = debuts[min(nbMatrices, caseMax)]
     print("Que désirez vous faire ?")
@@ -56,7 +59,10 @@ def choixMenu() :
     choix = int(choix)-1
     return choix
 
-# propose à l'utilisateur de visualiser les matrices, puis demande de choisir une matrice, et renvoie son numéro
+""" propose à l'utilisateur de visualiser les matrices, puis demande de choisir une matrice, et renvoie son numéro
+Return :
+    int : indice (dans 'listeMatrices') de la matrice choisie par l'utilisateur
+"""
 def choixMatrice() :
     afficher = False
     while afficher != "oui" and afficher != "non" :
@@ -70,8 +76,13 @@ def choixMatrice() :
     num = int(num)-1
     return num
 
-# demande un int plus grand que borneInf à l'utilisateur, en lui affichant le texte passé en paramètres
-# reboucle tant que les données ne sont pas valides, puis renvoie l'int
+""" demande un int plus grand que borneInf à l'utilisateur, en lui affichant le texte passé en paramètres. Reboucle tant que les données ne sont pas valides, puis renvoie l'int
+Args :
+    texte (str) : demande formulée à l'utilisateur
+    borneInf (int) : borne inférieur (incluse)
+Return :
+    int : nombre entré par l'utilisateur
+"""
 def intBorneInfWhile(texte, borneInf) :
     n = "non"
     while not n.lstrip("-").isdigit() or int(n) < borneInf :
@@ -81,7 +92,10 @@ def intBorneInfWhile(texte, borneInf) :
 
 # =========== APPLICATION DES CHOIX ===========
 
-# fait ce que l'utilisateur a demandé, en appelant les méthodes nécessaires
+""" fait ce que l'utilisateur a demandé, en appelant les méthodes nécessaires
+Args :
+    choix (int) : choix fait par l'utilisateur
+"""
 def appliquerChoix(choix) :
     global listeMatrices
     global nbMatrices
