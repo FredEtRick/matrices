@@ -3,12 +3,16 @@
 # utilisateur fait ses choix, et indique ses demandes
 
 from pprint import pprint
+import math
+import os
+import logging
+
+cheminCourant = os.path.dirname(__file__)
+cheminLog = os.path.join(cheminCourant, "logs.txt")
+logging.basicConfig(level=logging.WARNING, format="[%(asctime)s - %(levelname)s] %(message)s", filename=cheminLog, filemode="a")
+
 from matrices import *
 from vecteurs import *
-import logging
-import math
-
-logging.basicConfig(level=logging.WARNING)
 
 # =========== VARIABLES ===========
 
