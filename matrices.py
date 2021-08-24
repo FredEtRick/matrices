@@ -4,6 +4,7 @@ import random
 import copy
 import math
 import logging
+import fractions
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -27,19 +28,20 @@ class Matrice() :
         identite (bool) : True si l'utilisateur souhaite créer une matrice identité
         nbl (int) : NomBre de Lignes de la matrice
         nbc (int) : NomBre de Colonnes de la matrice
-        matrice (list[list[float]]) : matrice. Pas l'objet, mais les valeurs, sous forme de liste de lignes, étant elles mêmes des listes de float
+        matrice (list[list[Fraction]]) : matrice. Pas l'objet, mais les valeurs, sous forme de liste de lignes, étant elles mêmes des listes de float
         minNbl (int) : nombre minimal de lignes dans la matrice (pour un choix au hasard)
         maxNbl (int) : nombre maximal de lignes dans la matrice
         minNbc (int) : nombre minimal de colonnes dans la matrice
         maxNbc (int) : nombre maximal de colonnes dans la matrice
         minVals (int) : valeur minimale dans chaque case de la matrice
         maxVals (int) : valeur minimale dans chaque case de la matrice
+        maxDen (int) : valeur minimale du dénominateur dans chaque case de la matrice
     """
-    def __init__(self, saisie = False, hasard = False, identite=False, nbl = 0, nbc = 0, matrice = [], minNbl = 2, maxNbl = 8, minNbc = 2, maxNbc = 8, minVals = -25, maxVals = 25) :
+    def __init__(self, saisie = False, hasard = False, identite=False, nbl = 0, nbc = 0, matrice = [], minNbl = 2, maxNbl = 8, minNbc = 2, maxNbc = 8, minVals = -25, maxVals = 25, maxDen=4) :
         if saisie :
             nbl, nbc, matrice = self.saisie()
         elif hasard :
-            nbl, nbc, matrice = self.hasard(minNbl, maxNbl, minNbc, maxNbc, minVals, maxVals)
+            nbl, nbc, matrice = self.hasard(minNbl, maxNbl, minNbc, maxNbc, minVals, maxVals, maxDen)
         elif identite :
             nbl, nbc, matrice = self.identite(nbl)
         self.nbl = nbl
@@ -50,7 +52,7 @@ class Matrice() :
     Return :
         int : nombre de lignes de la matrice
         int : nombre de colonnes de la matrice
-        list[list[float]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
+        list[list[Fraction]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de Fraction.
     """
     def saisie(self) :
         print()
@@ -61,8 +63,10 @@ class Matrice() :
         for i in range(nbl) :
             ligne = []
             for j in range(nbc) :
-                valeur = int(input(f"a{i}{j} : "))
-                ligne.append(valeur)
+                num = int(input(f"a{i}{j}, numérateur : "))
+                den = int(input(f"a{i}{j}, dénominateur : "))
+                frac = fractions.Fraction(numerator=num, denominator=den)
+                ligne.append(frac)
             matrice.append(ligne)
         return nbl, nbc, matrice
 
@@ -74,20 +78,23 @@ class Matrice() :
         maxNbc (int) : nombre maximal de colonnes dans la matrice
         minVals (int) : valeur minimale dans chaque case de la matrice
         maxVals (int) : valeur minimale dans chaque case de la matrice
+        maxDen (int) : valeur minimale de chaque dénominateur dans chaque case de la matrice
     Return :
         int : nombre de lignes de la matrice
         int : nombre de colonnes de la matrice
-        list[list[float]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
+        list[list[Fraction]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
     """
-    def hasard(self, minNbl, maxNbl, minNbc, maxNbc, minVals, maxVals) :
+    def hasard(self, minNbl, maxNbl, minNbc, maxNbc, minVals, maxVals, maxDen) :
         nbl = random.randint(minNbl, maxNbl)
         nbc = random.randint(minNbc, maxNbc)
         matrice = []
         for i in range(nbl) :
             ligne = []
             for j in range(nbc) :
-                valeur = random.randint(minVals, maxVals)
-                ligne.append(valeur)
+                den = random.randint(1, maxDen)
+                num = random.randint(minVals*den, maxVals*den)
+                frac = fractions.Fraction(numerator=num, denominator=den)
+                ligne.append(frac)
             matrice.append(ligne)
         return nbl, nbc, matrice
 
@@ -100,13 +107,13 @@ class Matrice() :
     Return :
         str : représentation textuelle de la matrice
     """
-    def __repr__(self, espace = 6, decalage = 0) :
+    def __repr__(self, espace = 10, decalage = 0) :
         strMat = ""
         for ligne in self.matrice :
             strMat += " " * decalage
             strMat += "[ "
             for valeur in ligne :
-                strVal = self.normaliserLargeur(valeur, espace, 3)
+                strVal = self.normaliserLargeur(valeur, espace)
                 strMat += strVal + " "
             strMat += "]\n"
         return strMat
@@ -115,12 +122,11 @@ class Matrice() :
     Args :
         n (float) : valeur à afficher dans une case de la matrice
         largeur (int) : largeur d'une colonne de la matrice
-        precision (int) : précision de la valeur, pour l'affichage
     Return :
         str : texte à afficher pour représenter la valeur dans la case de la matrice
     """
-    def normaliserLargeur(self, n, largeur, precision) :
-        chaine = str(round(n, precision))
+    def normaliserLargeur(self, n, largeur=10) :
+        chaine = str(fractions.Fraction(n))
         while len(chaine) < largeur :
             chaine += " "
         return chaine
@@ -175,7 +181,7 @@ class Matrice() :
     Return :
         int : nombre de lignes de la matrice
         int : nombre de colonnes de la matrice
-        list[list[float]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
+        list[list[Fraction]] : valeurs de la matrice. Liste de lignes, étant elles mêmes des listes de valeurs.
     """
     def identite(self, n) :
         matrice = []
@@ -183,9 +189,11 @@ class Matrice() :
             ligne = []
             for j in range(n) :
                 if i == j :
-                    ligne.append(1)
+                    frac = fractions.Fraction(numerator=1, denominator=1)
+                    ligne.append(frac)
                 else :
-                    ligne.append(0)
+                    frac = fractions.Fraction(numerator=0, denominator=1)
+                    ligne.append(frac)
             matrice.append(ligne)
         return n, n, matrice
 
@@ -343,8 +351,6 @@ class Matrice() :
             cptPivots = 0
             for col in range(mrref.nbc) :
                 if col in pivots :
-                    logging.debug("cptPivots : " + str(cptPivots))
-                    logging.debug("col : " + str(col))
                     vecteur.append(-mrref.matrice[cptPivots][colLibre])
                     cptPivots += 1
                 elif col == colLibre :
@@ -384,7 +390,7 @@ class Matrice() :
         x0 = self.noyau()
         strSol += "Infinité de solutions. Solution générale X = Xp + c * Xn :\n"
         for col in range(self.nbc - 1) :
-            strXp = xp.normaliserLargeur(xp.composantes[col], 6, 3)
+            strXp = xp.normaliserLargeur(xp.composantes[col])
             strSol += "[ " + strXp + " ] "
             if col == self.nbc - 2 :
                 strSol += " + c1 [ "
@@ -392,7 +398,7 @@ class Matrice() :
                 strSol += "      [ "
             for vect in range(len(x0)) :
                 valX0 = x0[vect].composantes[col]
-                strX0 = xp.normaliserLargeur(valX0, 6, 3)
+                strX0 = xp.normaliserLargeur(valX0)
                 strSol += strX0 + "]"
                 if vect != len(x0) - 1 :
                     if col == self.nbc - 2 :

@@ -6,6 +6,7 @@ from pprint import pprint
 import math
 import os
 import logging
+import fractions
 
 cheminCourant = os.path.dirname(__file__)
 cheminLog = os.path.join(cheminCourant, "logs.txt")
@@ -117,7 +118,8 @@ def appliquerChoix(choix) :
             maxNbc = intBorneInfWhile("Nombre maximal de colonnes : ", minNbc)
             minVals = intBorneInfWhile("Valeur minimale autorisée : ", -math.inf)
             maxVals = intBorneInfWhile("Valeur maximale autorisée : ", minVals)
-            m = Matrice(hasard=True, minNbl=minNbl, maxNbl=maxNbl, minNbc=minNbc, maxNbc=maxNbc, minVals=minVals, maxVals=maxVals)
+            maxDen = intBorneInfWhile("Valeur maximale pour le dénominateur : ", 1)
+            m = Matrice(hasard=True, minNbl=minNbl, maxNbl=maxNbl, minNbc=minNbc, maxNbc=maxNbc, minVals=minVals, maxVals=maxVals, maxDen=maxDen)
             listeMatrices.append(m)
         else :
             m = Matrice(hasard=True)
@@ -165,7 +167,8 @@ def appliquerChoix(choix) :
     if choix == 8 : # calculer le noyau d'une matrice
         num = choixMatrice()
         noyau = listeMatrices[num].noyau()
-        pprint(noyau) # TODO : améliorer une fois que j'aurais créé la classe vecteur
+        for v in noyau :
+            print(v)
     if choix == 9 : # effacer une matrice en mémoire
         num = choixMatrice()
         supprimee = listeMatrices.pop(num)

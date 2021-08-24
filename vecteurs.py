@@ -8,6 +8,7 @@ import random
 import copy
 import math
 import logging
+import fractions
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -31,12 +32,15 @@ class Vecteur() :
         nul (bool) : True si l'utilisateur souhaite créer un vecteur nul
         composantes (tuple[float]) : composantes du vecteur,
         dim (int) : nombre de dimensions de l'espace auquel appartient le vecteur (nombre de composantes)
+        minVals (int) : valeur minimale de chaque composant du vecteur
+        maxVals (int) : valeur minimale de chaque composant du vecteur
+        maxDen (int) : valeur minimale du dénominateur de chaque composant du vecteur
     """
-    def __init__(self, saisie=False, hasard=False, nul=False, composantes=[], dim=0, minVals=-25, maxVals=25) :
+    def __init__(self, saisie=False, hasard=False, nul=False, composantes=[], dim=0, minVals=-25, maxVals=25, maxDen=4) :
         if saisie :
             dim, composantes = self.saisie()
         elif hasard :
-            dim, composantes = self.hasard(dim, minVals, maxVals)
+            dim, composantes = self.hasard(dim, minVals, maxVals, maxDen)
         elif nul :
             dim, composantes = self.nul(dim)
         self.dim = dim
@@ -45,7 +49,7 @@ class Vecteur() :
     """ saisie manuelle du vecteur pour le constructeur, composante par composante
     Return :
         int : nombre de dimensions de l'espace contenant le vecteur
-        tuple[float] : composantes du vecteur
+        tuple[Fraction] : composantes du vecteur
     """
     def saisie(self) :
         print()
@@ -53,23 +57,30 @@ class Vecteur() :
         dim = int(input("Nombre de dimensions : "))
         composantes = []
         for i in range(dim) :
-            composante = int(input(f"composante {i} : "))
-            composantes.append(composante)
+            num = int(input(f"composante {i}, numérateur : "))
+            den = int(input(f"composante {i}, dénominateur : "))
+            frac = fractions.Fraction(numerator=num, denominator=den)
+            composantes.append(frac)
         composantes = tuple(composantes)
         return dim, composantes
 
     """ remplissage du vecteur au hasard, pour le constructeur, avec limites éventuellement indiquées manuellement
     Args :
         dim (int) : nombre de dimensions de l'espace auquel le vecteur appartient
+        minVals (int) : valeur minimale de chaque composant du vecteur
+        maxVals (int) : valeur minimale de chaque composant du vecteur
+        maxDen (int) : valeur minimale du dénominateur de chaque composant du vecteur
     Return :
         dim (int)
-        tuple[float] : composantes du vecteur
+        tuple[Fraction] : composantes du vecteur
     """
-    def hasard(self, dim, minVals, maxVals) :
+    def hasard(self, dim, minVals, maxVals, maxDen) :
         composantes = []
         for i in range(dim) :
-            composante = random.randint(minVals, maxVals)
-            composantes.append(composante)
+            den = random.randint(1, maxDen)
+            num = random.randint(minVals*den, maxVals*den)
+            frac = fractions.Fraction(numerator=num, denominator=den)
+            composantes.append(frac)
         composantes = tuple(composantes)
         return dim, composantes
     
@@ -81,12 +92,12 @@ class Vecteur() :
     Return :
         str : représentation textuelle de la matrice
     """
-    def __repr__(self, espace=6) :
+    def __repr__(self, espace=10) :
         if self.dim > 0 :
             repr = "( "
             for i in range(len(self.composantes)) :
                 composante = self.composantes[i]
-                compTexte = self.normaliserLargeur(composante, espace, 3)
+                compTexte = self.normaliserLargeur(composante, espace)
                 repr += compTexte
                 if i < len(self.composantes) - 1 :
                     repr += ", "
@@ -101,12 +112,11 @@ class Vecteur() :
     Args :
         n (float) : composante à afficher
         largeur (int) : largeur d'affichage prévu pour une composante
-        precision (int) : précision de la valeur, pour l'affichage
     Return :
         str : texte à afficher pour représenter la composante du vecteur
     """
-    def normaliserLargeur(self, n, largeur, precision) :
-        chaine = str(round(n, precision))
+    def normaliserLargeur(self, n, largeur=10) :
+        chaine = str(fractions.Fraction(n))
         while len(chaine) < largeur :
             chaine += " "
         return chaine
