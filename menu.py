@@ -198,6 +198,7 @@ def appliquerChoix(choix) :
 # début du programme
 # demande appelle fonctions précédemment définies
 # boucle tant que l'utilisateur souhaite continuer
+
 continuer = True
 while continuer :
     choix = choixMenu()

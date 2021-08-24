@@ -7,14 +7,16 @@ import logging
 
 logging.basicConfig(level=logging.WARNING)
 
+from vecteurs import *
+
 class Matrice() :
 
     # création matrice : init, saisie, hasard
-    # représentation textuelle : repr normaliserLargeur
-    # propriétés matrice : nullity indicesLibresPivots
-    # matrices particulières : identite transposeReturn transposeInplace rref inverse
-    # solutions : (dénombrement :) sol0 nbsol (1 sol :) solSi1 (inf sol :) noyau xp solInf (solutions :) sol
-    # opérations entre matrices : somme prod
+    # représentation textuelle : repr, normaliserLargeur
+    # propriétés matrice : nullity, indicesLibresPivots
+    # matrices particulières : identite, transposeReturn, transposeInplace, rref, inverse, castVecteur
+    # solutions : (dénombrement :) sol0, nbsol, (1 sol :) solSi1, (inf sol :) noyau, xp, solInf, (solutions :) sol
+    # opérations entre matrices : somme, prod
 
     # =========== CREATION DE LA MATRICE (constructeur et méthodes qu'il appel) ===========
 
@@ -95,6 +97,8 @@ class Matrice() :
     Args :
         espace (int) : espace prit par une valeur dans la matrice, en terme de nombres de caractères, pour éviter décalages d'une ligne sur l'autre
         decalage (int) : décalage appliqué à la matrice, marge créée sur la gauche. Utile pour B dans AB=C, en affichant B au dessus de C, pour que le calcul soit plus naturel pour l'humain. Pas encore implémenté.
+    Return :
+        str : représentation textuelle de la matrice
     """
     def __repr__(self, espace = 6, decalage = 0) :
         strMat = ""
@@ -258,6 +262,32 @@ class Matrice() :
             invValeurs.append(mrref.matrice[i][self.nbc:])
         inv = Matrice(nbl = self.nbl, nbc = self.nbc, matrice=invValeurs)
         return inv
+    
+    """ transforme la matrice en vecteur. La matrice ne doit avoir qu'une seule ligne ou qu'une seule colonne.
+    Return :
+        Vecteur : vecteur dont les composantes sont celles de l'unique ligne ou colonne de la matrice, ou None si la matrice n'a ni une unique ligne, ni une unique colonne
+    """
+    def castVecteur(self) :
+        vecteur = None
+        if self.nbl != 1 and self.nbc != 1 :
+            print("cast impossible, la matrice a plus d'une ligne et plus d'une colonne.")
+            return None
+        elif self.nbl == 1 :
+            dim = self.nbc
+            composantes = []
+            for valeur in self.matrice[0] :
+                composantes.append(valeur)
+            composantes = tuple(composantes)
+            v = Vecteur(composantes=composantes, dim=dim)
+            return v
+        else :
+            dim = self.nbl
+            composantes = []
+            for ligne in self.matrice :
+                composantes.append(ligne[0])
+            composantes = tuple(composantes)
+            v = Vecteur(composantes=composantes, dim=dim)
+            return v
 
     # =========== SOLUTIONS ET LEURS NOMBRES ===========
     
@@ -295,9 +325,14 @@ class Matrice() :
             sol.append(i[-1])
         return sol
     
+    # TODO : problème : affiche un vecteur par variable libre sans compter la dernière (considère augmentée)
+    # ... mais affiche autant de composantes qu'il n'y a de colonne (considère non augmentée)
+    # trancher... Choix : augmentée je pense, certes pas besoin d'augmenter pour calculer noyau,
+    # mais on a besoin de le calculer quand il y a une infinité de solutions
+    # et on ne sait qu'il y en a une infinité que si elle est augmentée
     """ renvoie le noyau de la matrice (les vecteurs base du sous espace dont l'image par la matrice est l'origine) TODO : améliorer une fois que j'aurais créé la classe vecteur
     Return :
-        list[list[float]] : noyau, liste de vecteurs, chaque vecteur étant une liste de floats
+        list[Vecteur] : noyau de la matrice, liste de vecteurs
     """
     def noyau(self) :
         mrref = self.rref()
@@ -316,12 +351,14 @@ class Matrice() :
                     vecteur.append(1)
                 else :
                     vecteur.append(0)
+            vecteur = tuple(vecteur)
+            vecteur = Vecteur(composantes=vecteur, dim=len(vecteur))
             noyau.append(vecteur)
         return noyau
     
     """ calcule une solution particulière de la matrice. Utilisé pour le calcul de la solution générale, quand la matrice a une infinité de solutions. Considérer la matrice comme étant augmentée
     Return :
-        list[float] : vecteur, une solution particulière de la matrice augmentée
+        Vecteur : une solution particulière de la matrice augmentée
     """
     def xp(self) :
         mrref = self.rref()
@@ -334,6 +371,7 @@ class Matrice() :
                 nbPivotsVerifies += 1
             else :
                 xp.append(0)
+        xp = Vecteur(composantes=xp, dim=len(xp))
         return xp
     
     """ calcule les solutions et créé un string pour affichage. A utiliser si la matrice a une infinité de solutions
@@ -346,15 +384,15 @@ class Matrice() :
         x0 = self.noyau()
         strSol += "Infinité de solutions. Solution générale X = Xp + c * Xn :\n"
         for col in range(self.nbc - 1) :
-            strXp = self.normaliserLargeur(xp[col], 6, 3)
+            strXp = xp.normaliserLargeur(xp.composantes[col], 6, 3)
             strSol += "[ " + strXp + " ] "
             if col == self.nbc - 2 :
                 strSol += " + c1 [ "
             else :
                 strSol += "      [ "
             for vect in range(len(x0)) :
-                valX0 = x0[vect][col]
-                strX0 = self.normaliserLargeur(valX0, 6, 3)
+                valX0 = x0[vect].composantes[col]
+                strX0 = xp.normaliserLargeur(valX0, 6, 3)
                 strSol += strX0 + "]"
                 if vect != len(x0) - 1 :
                     if col == self.nbc - 2 :
