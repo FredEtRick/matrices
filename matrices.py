@@ -216,12 +216,6 @@ class Matrice() :
             transp.append(ligne)
         transp = Matrice(nbl=self.nbc, nbc=self.nbl, matrice=transp)
         return transp
-    
-    """ transpose la matrice elle même directement, ne renvoie rien. TODO : pas utilisé pour le moment. Utiliser ? Supprimer ?
-    """
-    def transposeInplace(self) :
-        transp = self.transposeReturn()
-        self.nbl, self.nbc, self.matrice = transp.nbl, transp.nbc, transp.matrice
 
     """ renvoie une version échelonnée réduite de la matrice
     Return :
