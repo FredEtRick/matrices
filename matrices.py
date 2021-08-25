@@ -240,7 +240,10 @@ class Matrice() :
             # passe pivot à 1
             diviseur = copie.matrice[pivotLigne][pivotCol]
             for i in range(self.nbc) :
-                copie.matrice[pivotLigne][i] /= diviseur
+                try :
+                    copie.matrice[pivotLigne][i] /= diviseur
+                except ZeroDivisionError as e :
+                    print("matrices => rref => " + e)
             # annule colonne sauf pivot
             lignesSaufPivot = list(range(self.nbl))
             lignesSaufPivot.pop(pivotLigne)
