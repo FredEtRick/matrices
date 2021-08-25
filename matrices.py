@@ -149,7 +149,7 @@ class Matrice() :
         List[int] : indices des colonnes de la matrice correspondant aux variables libres
         List[int] : indices des colonnes de la matrice correspondant aux variables pivots
     """
-    def indicesLibresPivots(self) :
+    def indicesLibresPivots(self, augmentee = False) :
         mrref = self.rref()
         libres = []
         pivots = []
@@ -165,7 +165,12 @@ class Matrice() :
                 col = pivots[-1] + 1
                 while col in libres :
                     col += 1
-            while col <= self.nbc - 2 :
+            fin = None
+            if augmentee :
+                fin = self.nbc - 2
+            else :
+                fin = self.nbc - 1
+            while col <= fin :
                 if not trouvePivot and mrref.matrice[ligne][col] == 1 :
                     pivots.append(col)
                     trouvePivot = True
@@ -337,18 +342,13 @@ class Matrice() :
             sol.append(i[-1])
         return sol
     
-    # TODO : problème : affiche un vecteur par variable libre sans compter la dernière (considère augmentée)
-    # ... mais affiche autant de composantes qu'il n'y a de colonne (considère non augmentée)
-    # trancher... Choix : augmentée je pense, certes pas besoin d'augmenter pour calculer noyau,
-    # mais on a besoin de le calculer quand il y a une infinité de solutions
-    # et on ne sait qu'il y en a une infinité que si elle est augmentée
     """ renvoie le noyau de la matrice (les vecteurs base du sous espace dont l'image par la matrice est l'origine) TODO : améliorer une fois que j'aurais créé la classe vecteur
     Return :
         list[Vecteur] : noyau de la matrice, liste de vecteurs
     """
-    def noyau(self) :
+    def noyau(self, augmentee=False) :
         mrref = self.rref()
-        libres, pivots = self.indicesLibresPivots()
+        libres, pivots = self.indicesLibresPivots(augmentee)
         noyau = []
         for colLibre in libres :
             vecteur = []
@@ -372,7 +372,7 @@ class Matrice() :
     """
     def xp(self) :
         mrref = self.rref()
-        libres, pivots = self.indicesLibresPivots()
+        libres, pivots = self.indicesLibresPivots(True)
         xp = []
         nbPivotsVerifies = 0
         for col in range(mrref.nbc) :
@@ -391,7 +391,7 @@ class Matrice() :
     def solInf(self) :
         strSol = ""
         xp = self.xp()
-        x0 = self.noyau()
+        x0 = self.noyau(True)
         strSol += "Infinité de solutions. Solution générale X = Xp + c * Xn :\n"
         for col in range(self.nbc - 1) :
             strXp = xp.normaliserLargeur(xp.composantes[col])
