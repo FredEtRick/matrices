@@ -12,6 +12,7 @@ cheminCourant = os.path.dirname(__file__)
 cheminLog = os.path.join(cheminCourant, "logs.txt")
 logging.basicConfig(level=logging.WARNING, format="[%(asctime)s - %(levelname)s] %(message)s", filename=cheminLog, filemode="a")
 
+from antiCirculaire import *
 from matrices import *
 from vecteurs import *
 
@@ -76,20 +77,6 @@ def choixMatrice() :
         num = input("Tapez le numéro de la matrice choisie, et appuyez sur 'Entrée' : ")
     num = int(num)-1
     return num
-
-""" demande un int plus grand que borneInf à l'utilisateur, en lui affichant le texte passé en paramètres. Reboucle tant que les données ne sont pas valides, puis renvoie l'int
-Args :
-    texte (str) : demande formulée à l'utilisateur
-    borneInf (int) : borne inférieur (incluse)
-Return :
-    int : nombre entré par l'utilisateur
-"""
-def intBorneInfWhile(texte, borneInf) :
-    n = "non"
-    while not n.lstrip("-").isdigit() or int(n) < borneInf :
-        n = input(texte)
-    n = int(n)
-    return n
 
 # =========== APPLICATION DES CHOIX ===========
 

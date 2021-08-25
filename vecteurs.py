@@ -12,6 +12,7 @@ import fractions
 
 logging.basicConfig(level=logging.WARNING)
 
+from antiCirculaire import *
 from matrices import *
 
 class Vecteur() :
@@ -54,13 +55,14 @@ class Vecteur() :
     def saisie(self) :
         print()
         print("Saisie du vecteur :")
-        dim = int(input("Nombre de dimensions : "))
+        dim = intBorneInfWhile("Nombre de dimensions : ", 0)
         composantes = []
-        for i in range(dim) :
-            num = int(input(f"composante {i}, numérateur : "))
-            den = int(input(f"composante {i}, dénominateur : "))
-            frac = fractions.Fraction(numerator=num, denominator=den)
-            composantes.append(frac)
+        if dim > 0 :
+            for i in range(dim) :
+                num = intBorneInfWhile(f"composante {i}, numérateur : ", -math.inf)
+                den = intBorneInfWhile(f"composante {i}, dénominateur : ", 1)
+                frac = fractions.Fraction(numerator=num, denominator=den)
+                composantes.append(frac)
         composantes = tuple(composantes)
         return dim, composantes
 

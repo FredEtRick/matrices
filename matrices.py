@@ -8,6 +8,7 @@ import fractions
 
 logging.basicConfig(level=logging.WARNING)
 
+from antiCirculaire import *
 from vecteurs import *
 
 class Matrice() :
@@ -57,14 +58,14 @@ class Matrice() :
     def saisie(self) :
         print()
         print("Saisie de la matrice :")
-        nbl = int(input("Nombre de lignes : "))
-        nbc = int(input("Nombre de colonnes : "))
+        nbl = intBorneInfWhile("Nombre de lignes : ", 1)
+        nbc = intBorneInfWhile("Nombre de colonnes : ", 1)
         matrice = []
         for i in range(nbl) :
             ligne = []
             for j in range(nbc) :
-                num = int(input(f"a{i}{j}, numérateur : "))
-                den = int(input(f"a{i}{j}, dénominateur : "))
+                num = intBorneInfWhile(f"a{i}{j}, numérateur : ", -math.inf)
+                den = intBorneInfWhile(f"a{i}{j}, dénominateur : ", 1)
                 frac = fractions.Fraction(numerator=num, denominator=den)
                 ligne.append(frac)
             matrice.append(ligne)
